@@ -1,0 +1,9 @@
+selenium==3.141.0
+streamlit==0.72.0
+altair==4.1.0
+pandas==1.0.5
+xlrd==1.2.0
+numpy==1.19.1
+requests==2.24.0
+plotly==4.9.0
+beautifulsoup4==4.9.3
