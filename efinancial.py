@@ -110,6 +110,8 @@ df = df.drop_duplicates('Job Desc')
 with st.beta_expander('View all jobs'):
     st.write(df)
 
+dfana = df
+
 ### Analysis ###
 
 groupdf = df.groupby('Company')['Job Desc'].count().sort_values(ascending=False)
@@ -131,3 +133,35 @@ df.reset_index(inplace=True)
 
 fig = alt.Chart(df).mark_bar().encode(alt.X('Company:N',sort='-y'),y='Job Desc',color=alt.Color('Company:N',legend=None)).properties(height=500)
 st.altair_chart(fig,use_container_width=True)
+
+
+nbfulltime = dfana[dfana['Contract']=='Full time'].count()[0]/totaljobs
+
+def hasNumbers(string):
+    return any(char.isdigit() for char in string)
+
+dfana['Salary detail'] = dfana['Salary'].apply(hasNumbers)
+
+nbsalary = dfana['Salary detail'].sum()/totaljobs
+
+def hasvp(string):
+    listtitles = ['vp','VP','vice president','vice-president','Vice','Director','director']
+    excludewords = ['Assistant','AVP']
+    returnlist = [title in string for title in listtitles]
+    excludelist = [word in string for word in excludewords]
+
+    if True in returnlist and True not in excludelist:
+        return 1
+
+
+dfana['Big Title'] = dfana['Job Title'].apply(hasvp)
+
+
+nbvp = dfana['Big Title'].sum()/totaljobs
+
+st.write('Percentage of full time positions: ',str('{:,.2%}'.format(nbfulltime)))
+st.write('Percentage of positions with some salary information: ',str('{:,.2%}'.format(nbsalary)))
+st.write('Percentage of positions with salary = competitive or vague: ',str('{:,.2%}'.format(1-nbsalary)))
+st.write('Percentage of positions with VP or Director title: ',str('{:,.2%}'.format(nbvp)))
+
+dfana[dfana['Big Title']==1]
