@@ -164,4 +164,16 @@ st.write('Percentage of positions with some salary information: ',str('{:,.2%}'.
 st.write('Percentage of positions with salary = competitive or vague: ',str('{:,.2%}'.format(1-nbsalary)))
 st.write('Percentage of positions with VP or Director title: ',str('{:,.2%}'.format(nbvp)))
 
-dfana[dfana['Big Title']==1]
+st.header('List of jobs for VP and Director')
+
+dfana = dfana[dfana['Big Title']==1].iloc[:,:-2]
+
+companylist = dfana['Company'].sort_values(ascending=True).unique().tolist()
+companylist.insert(0,'All')
+
+selectcompany = st.selectbox('Filter by company',companylist)
+
+if selectcompany != 'All':
+    dfana =dfana[dfana['Company']==selectcompany]
+
+st.table(dfana)
